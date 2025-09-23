@@ -1,4 +1,4 @@
-[![PyPI](https://img.shields.io/badge/python-3.9-blue.svg)]() [![FFmpeg](https://shields.io/badge/FFmpeg-%23171717.svg?logo=ffmpeg&style=for-the-badge&labelColor=171717&logoColor=5cb85c&style=flat)]() [![CC BY SA 4.0][cc-by-sa-shield]][cc-by-sa]
+[![PyPI](https://img.shields.io/badge/python-3.9-blue.svg)]() [![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white&style=flat)]() [![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white&style=flat)]() [![Matplotlib](https://img.shields.io/badge/Matplotlib-%23ffffff.svg?style=for-the-badge&logo=Matplotlib&logoColor=black&style=flat)]() [![FFmpeg](https://shields.io/badge/FFmpeg-%23171717.svg?logo=ffmpeg&style=for-the-badge&labelColor=171717&logoColor=5cb85c&style=flat)]() [![CC BY SA 4.0][cc-by-sa-shield]][cc-by-sa]
 
 # AmbisonicEnergyRenderer.py
 Generates an energy visualization video from an Ambisonic (ACN/SN3D) WAV file using precomputed k-NN inverse-distance weighting (IDW) onto a regular 2D grid, multiprocessing for per-frame computation, and direct ffmpeg streaming for efficient encoding.
