@@ -6,6 +6,7 @@ Generates an energy visualization video from an Ambisonic (ACN/SN3D) WAV file us
 The script supports high resolutions (e.g., 2160×1080), optional hardware encoders on macOS and Windows/NVIDIA, and periodic debug timing checkpoints every 10 seconds of frames to track throughput.
 
 Example resulting animation:
+
 <img src="https://i.ibb.co/j90vq6qp/animation.gif" width="500" />
 
 ## Features
