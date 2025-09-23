@@ -7,7 +7,7 @@ The script supports high resolutions (e.g., 2160×1080), optional hardware encod
 
 Example resulting animation:
 
-<img src="https://i.ibb.co/j90vq6qp/animation.gif" width="500" />
+![example resulting animation](https://i.ibb.co/j90vq6qp/animation.gif)
 
 ## Features
 - Ambisonic order is detected from the input channel count and used to build spherical-harmonic matrices and *max*-rE weights automatically, so higher orders are supported when more channels are present.
