@@ -1,93 +1,122 @@
-# Ambisonic Energy Renderer
+# AmbisonicEnergyRenderer.py
+Generates an energy visualization video from an Ambisonic (ACN/SN3D) WAV file using precomputed k-NN inverse-distance weighting (IDW) onto a regular 2D grid, multiprocessing for per-frame computation, and direct ffmpeg streaming for efficient encoding.
 
+The script supports high resolutions (e.g., 2160×1080), optional hardware encoders on macOS and Windows/NVIDIA, and periodic debug timing checkpoints every 10 seconds of frames to track throughput.
 
+## Features
+- Ambisonic order is detected from the input channel count and used to build spherical-harmonic matrices and *max*-rE weights automatically, so higher orders are supported when more channels are present.
+- Fast gridding via precomputed cKDTree k-NN mapping with azimuth wrap-around duplication to avoid vertical seam artifacts at −180°/180° longitudes, replacing slow per-frame scattered interpolation.
+- Multiprocessing with per-worker globals minimizes inter-process overhead by sharing large read-only arrays and streaming frames in order directly into ffmpeg, avoiding large intermediate files and peak memory spikes.
+- Matplotlib colormap API is optionally selectable with `--cmap` to choose any registered colormap name.
+- Optional hardware-accelerated video encoding on macOS (VideoToolbox) and Windows/NVIDIA (NVENC), with libx264 as the portable default fallback when hardware codecs are not available.
 
-## Getting started
+## Requirements
+- Python 3.9+ with NumPy, SciPy, Matplotlib, spaudiopy, and wavio installed, as the script relies on array math, spherical-harmonic utilities, and WAV I/O.
+- FFmpeg available on the system PATH (or specify via `–-ffmpeg`), since frames are streamed as raw RGB for encoding to MP4, and encoders must exist in the local ffmpeg build for the selected `–-encoder`.
+- T-design file `Design_5200_100_random.dat` placed next to the script by default (or a custom path via `–-tdesign`), providing the sampling directions for directional energy computation on the sphere.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+## Install dependencies with pip:
 ```
-cd existing_repo
-git remote add origin https://git.pg.edu.pl/p829296/AmbisonicEnergyRenderer.git
-git branch -M main
-git push -uf origin main
+python -m pip install numpy scipy matplotlib spaudiopy wavio
 ```
+FFmpeg should be a recent build with encoders for the chosen backend (libx264, h264_videotoolbox on macOS, h264_nvenc on NVIDIA, etc.), which can be verified via `ffmpeg -encoders` on each platform.
 
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://git.pg.edu.pl/p829296/AmbisonicEnergyRenderer/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Hardware acceleration notes
+- macOS: use `–-encoder h264_videotoolbox` or `–-encoder hevc_videotoolbox`, providing a target bitrate via `–-bitrate` to leverage Apple VideoToolbox hardware encoding on supported Macs.
+- Windows/NVIDIA (and Linux with NVIDIA): use `–-encoder h264_nvenc` or `–-encoder hevc_nvenc` with `–-bitrate` to use NVENC on RTX GPUs, provided the FFmpeg build includes NVENC support and drivers are installed.
+- Generic fallback: use `–-encoder libx264` with `–-crf` and `–-preset` controls for a portable software path that works without hardware encoders on all platforms.
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Basic invocation:
+```
+python AmbisonicEnergyRenderer.py -i path/to/input.wav
+```
+This creates an MP4 next to the input with the same basename, using libx264, CRF=20, “ultrafast” preset, 25 fps, and a ~2160×1080 grid by default via `–-grid-res 1/6`.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Full CLI:
+```
+-i, --input PATH              Input Ambisonics WAV (ACN/SN3D) [required]
+-o, --output PATH             Output MP4 (default: input with .mp4)
+-t, --tdesign PATH            Path to Design_5200_100_random.dat (default: script dir)
+-d, --dynamic-db FLOAT        Dynamic range in dB for normalization (default: 20.0)
+-n, --frames INT              Number of frames to render (default: full length)
+--fps INT                     Frames per second (default: 25)
+--grid-res FLOAT              Grid step in degrees (default: 1/6 → ~2160×1080)
+--knn INT                     k-NN for IDW (default: 3)
+--idw-pow FLOAT               IDW power parameter p (default: 2.0)
+-–cmap STR                    Matplotlib colormap name (e.g., inferno, magma, coolwarm, twilight_r; default: viridis)
+--encoder STR                 One of: libx264 (default), h264_videotoolbox, hevc_videotoolbox,
+                              h264_nvenc, hevc_nvenc, h264_qsv, hevc_qsv, h264_amf, hevc_amf
+--crf STR                     CRF for libx264 (default: 20); ignored by hardware encoders
+--bitrate STR                 Target bitrate (e.g., 10M) for hardware encoders; ignored by libx264
+--preset STR                  libx264 preset (default: ultrafast); hardware encoders ignore this
+--ffmpeg STR                  Path to ffmpeg executable (default: ffmpeg on PATH)
+--debug                       Print timing/progress every 10 seconds of frames (default: True)
+```
+These flags match the script's argparse interface and encoder handling, allowing platform-independent selection of software or hardware encoding and control of spatial grid, frame rate, dynamic range normalization, and any registered Matplotlib colormap.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Colormaps
+- Choose any registered colormap via `--cmap`, for example: inferno, viridis, plasma, magma, cividis, coolwarm, RdYlBu, twilight, twilight_r, tab10, and all `_r` reversed variants.
+- Matplotlib's universal registry is accessible through `matplotlib.colormaps[name]`, which this script uses to build a 256‑entry RGB lookup table.
+- Perceptually uniform sequential colormaps (viridis, magma, inferno, cividis) are recommended for scalar magnitude; diverging maps (e.g., coolwarm) are best around a meaningful midpoint; cyclic maps (e.g., twilight) are appropriate when endpoints should meet.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+List available colormaps known to the local Matplotlib installation:
+```
+python -c "import matplotlib; print(list(matplotlib.colormaps.keys()))"
+```
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## Examples
+- Portable software encode (CRF based):
+```
+python AmbisonicEnergyRenderer.py -i input.wav -o out.mp4 --encoder libx264 --crf 20 --preset ultrafast
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+- macOS VideoToolbox hardware encode:
+```
+python AmbisonicEnergyRenderer.py -i input.wav -o out.mp4 --encoder h264_videotoolbox --bitrate 12M
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+- Windows/NVIDIA NVENC hardware encode:
+```
+python AmbisonicEnergyRenderer.py -i input.wav -o out.mp4 --encoder h264_nvenc --bitrate 12M
+```
+
+- Explicit ffmpeg path on Windows:
+```
+python AmbisonicEnergyRenderer.py -i input.wav -o out.mp4 --ffmpeg "C:\ffmpeg\bin\ffmpeg.exe"
+```
+
+## Performance tuning
+- Resolution: `-–grid-res` controls spatial resolution; the default 1/6° produces ~2160×1080, and larger values (e.g., 0.5°) reduce pixels and speed up computation and encoding.
+- Interpolation smoothness/detail: `–-knn` and `–-idw-pow` adjust IDW interpolation; increasing k smooths the map while increasing idw-pow sharpens local detail, with runtime and memory roughly scaling linearly with k due to the gather-and-weight step.
+- Encoder: hardware encoders (`-–encoder h264_videotoolbox` on macOS or `–-encoder h264_nvenc` on NVIDIA) can substantially reduce total time-to-video compared to libx264, especially at larger resolutions, assuming the local ffmpeg build supports them.
+- Frames per second and window length: `–-fps` controls frame count per second, while the script uses a 200 ms energy window; fewer frames or a smaller grid reduce total compute and bitrate while maintaining intelligible motion for many use cases.
+
+## How it works
+- The script reads the WAV, infers the Ambisonic order from the channel count, computes max-rE weights, and applies spherical harmonics at t-design directions to obtain directional energy over a sliding window per frame, normalized to a chosen dynamic range.
+- A periodic cKDTree mapping is built once to map from the scattered spherical sample points to a uniform azimuth×zenith grid using k-NN IDW with azimuth seam duplication, and each frame applies a vectorized gather-and-weight to produce a grid without triangulation overhead or seam artifacts.
+- Frames are colormapped via a 256‑entry LUT using `matplotlib.colormaps[name]`, and raw RGB frames are streamed into ffmpeg for near real‑time encoding with the chosen encoder.
+
+## Troubleshooting
+- Hardware encoder not found: run `ffmpeg -encoders` to verify availability, and choose `--encoder libx264` if the desired hardware encoder is not compiled in or drivers are missing, or point `--ffmpeg` to a different ffmpeg binary that includes the encoder.
+- Multiprocessing semaphore warnings at shutdown: these often indicate the resource tracker cleaned up IPC objects on exit and are generally harmless; the script uses a with Pool context to cleanly close and join processes, and the warning can be ignored if outputs are correct.
+
+## Acknowledgments
+This animation approach builds on the original logic and implementation created by [Thomas Deppisch](https://github.com/thomasdeppisch) - the first author of the earlier script, whose work on spherical sampling, directional energy mapping, and visualization inspired this ffmpeg‑based version. Thank you for the foundational idea and methodology that made this tool possible.
 
 ## License
-For open source projects, say how it is licensed.
+This project is licensed under the **Creative Commons Attribution-ShareAlike 4.0 International License**.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+[![CC BY-NC-SA 4.0](https://licensebuttons.net/l/by-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-sa/4.0/)
+
+This means you are free to:
+
+-   **Share**: Copy and redistribute the material in any medium or format.
+-   **Adapt**: Remix, transform, and build upon the material.
+
+Under the following terms:
+
+-   **Attribution**: You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+-   **ShareAlike**: If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+
+You can find the full license details here: [https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/)
