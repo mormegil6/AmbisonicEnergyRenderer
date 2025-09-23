@@ -1,3 +1,5 @@
+[![PyPI](https://img.shields.io/badge/python-3.11-blue.svg)]() [![CC BY SA 4.0][cc-by-sa-shield]][cc-by-sa]
+
 # AmbisonicEnergyRenderer.py
 Generates an energy visualization video from an Ambisonic (ACN/SN3D) WAV file using precomputed k-NN inverse-distance weighting (IDW) onto a regular 2D grid, multiprocessing for per-frame computation, and direct ffmpeg streaming for efficient encoding.
 
@@ -108,8 +110,6 @@ This animation approach builds on the original logic and implementation created 
 All questions, comments and insights please address to me via e-mail: bartlomiej.mroz@pg.edu.pl
 
 ## License
-[![CC BY SA 4.0][cc-by-sa-shield]][cc-by-sa]
-
 This project is licensed under the [Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa].
 
 This means you are free to:
