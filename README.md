@@ -116,16 +116,6 @@ All questions, comments and insights please address to me via e-mail: bartlomiej
 ## License
 This project is licensed under the [Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa].
 
-This means you are free to:
-
--   **Share**: Copy and redistribute the material in any medium or format.
--   **Adapt**: Remix, transform, and build upon the material.
-
-Under the following terms:
-
--   **Attribution**: You must give appropriate credit, provide a link to the license, and indicate if changes were made.
--   **ShareAlike**: If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
-
 [![CC BY SA 4.0][cc-by-sa-image]][cc-by-sa]
 
 [cc-by-sa]: https://creativecommons.org/licenses/by-sa/4.0/
