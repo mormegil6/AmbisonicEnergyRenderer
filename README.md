@@ -5,6 +5,9 @@ Generates an energy visualization video from an Ambisonic (ACN/SN3D) WAV file us
 
 The script supports high resolutions (e.g., 2160×1080), optional hardware encoders on macOS and Windows/NVIDIA, and periodic debug timing checkpoints every 10 seconds of frames to track throughput.
 
+Example resulting animation:
+<img src="https://i.ibb.co/j90vq6qp/animation.gif" width="500" />
+
 ## Features
 - Ambisonic order is detected from the input channel count and used to build spherical-harmonic matrices and *max*-rE weights automatically, so higher orders are supported when more channels are present.
 - Fast gridding via precomputed cKDTree k-NN mapping with azimuth wrap-around duplication to avoid vertical seam artifacts at −180°/180° longitudes, replacing slow per-frame scattered interpolation.
