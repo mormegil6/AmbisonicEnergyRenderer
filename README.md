@@ -105,9 +105,9 @@ python AmbisonicEnergyRenderer.py -i input.wav -o out.mp4 --ffmpeg "C:\ffmpeg\bi
 This animation approach builds on the original logic and implementation created by [Thomas Deppisch](https://github.com/thomasdeppisch) - the first author of the earlier script, whose work on spherical sampling, directional energy mapping, and visualization inspired this ffmpeg‑based version. Thank you for the foundational idea and methodology that made this tool possible.
 
 ## License
-This project is licensed under the **Creative Commons Attribution-ShareAlike 4.0 International License**.
+[![CC BY SA 4.0][cc-by-sa-shield]][cc-by-sa]
 
-[![CC BY-NC-SA 4.0](https://licensebuttons.net/l/by-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-sa/4.0/)
+This project is licensed under the [Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa].
 
 This means you are free to:
 
@@ -119,4 +119,8 @@ Under the following terms:
 -   **Attribution**: You must give appropriate credit, provide a link to the license, and indicate if changes were made.
 -   **ShareAlike**: If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
 
-You can find the full license details here: [https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/)
+[![CC BY SA 4.0][cc-by-sa-image]][cc-by-sa]
+
+[cc-by-sa]: https://creativecommons.org/licenses/by-sa/4.0/
+[cc-by-sa-image]: https://i.creativecommons.org/l/by-sa/4.0/88x31.png
+[cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY%20SA%204.0-lightgrey.svg
