@@ -104,6 +104,9 @@ python AmbisonicEnergyRenderer.py -i input.wav -o out.mp4 --ffmpeg "C:\ffmpeg\bi
 ## Acknowledgments
 This animation approach builds on the original logic and implementation created by [Thomas Deppisch](https://github.com/thomasdeppisch) - the first author of the earlier script, whose work on spherical sampling, directional energy mapping, and visualization inspired this ffmpeg‑based version. Thank you for the foundational idea and methodology that made this tool possible.
 
+## Support
+All questions, comments and insights please address to me via e-mail: bartlomiej.mroz@pg.edu.pl
+
 ## License
 [![CC BY SA 4.0][cc-by-sa-shield]][cc-by-sa]
 
