@@ -112,7 +112,7 @@ This animation approach builds on the original logic and implementation created 
 
 ## Contact
 
-Bartłomiej Mróz · bartlomiej.mroz@pg.edu.pl · [bmroz.eu](https://bmroz.eu) · Department of Multimedia Systems, Gdańsk University of Technology
+Bartłomiej Mróz · bartlomiej.mroz@pg.edu.pl · Department of Multimedia Systems, Gdańsk University of Technology · [bmroz.eu](https://bmroz.eu)
 
 ## License
 
