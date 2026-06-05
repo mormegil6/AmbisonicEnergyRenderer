@@ -1,4 +1,4 @@
-[![PyPI](https://img.shields.io/badge/python-3.9-blue.svg)]() [![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white&style=flat)]() [![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white&style=flat)]() [![Matplotlib](https://img.shields.io/badge/Matplotlib-%23ffffff.svg?style=for-the-badge&logo=Matplotlib&logoColor=black&style=flat)]() [![FFmpeg](https://shields.io/badge/FFmpeg-%23171717.svg?logo=ffmpeg&style=for-the-badge&labelColor=171717&logoColor=5cb85c&style=flat)]() [![CC BY SA 4.0][cc-by-sa-shield]][cc-by-sa]
+[![PyPI](https://img.shields.io/badge/python-3.9-blue.svg)]() [![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white&style=flat)]() [![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white&style=flat)]() [![Matplotlib](https://img.shields.io/badge/Matplotlib-%23ffffff.svg?style=for-the-badge&logo=Matplotlib&logoColor=black&style=flat)]() [![FFmpeg](https://shields.io/badge/FFmpeg-%23171717.svg?logo=ffmpeg&style=for-the-badge&labelColor=171717&logoColor=5cb85c&style=flat)]() [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # AmbisonicEnergyRenderer.py
 Generates an energy visualization video from an Ambisonic (ACN/SN3D) WAV file using precomputed k-NN inverse-distance weighting (IDW) onto a regular 2D grid, multiprocessing for per-frame computation, and direct ffmpeg streaming for efficient encoding.
@@ -114,10 +114,7 @@ This animation approach builds on the original logic and implementation created 
 All questions, comments and insights please address to me via e-mail: bartlomiej.mroz@pg.edu.pl
 
 ## License
-This project is licensed under the [Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa].
 
-[![CC BY SA 4.0][cc-by-sa-image]][cc-by-sa]
+This project is licensed under the [MIT License](LICENSE).
 
-[cc-by-sa]: https://creativecommons.org/licenses/by-sa/4.0/
-[cc-by-sa-image]: https://i.creativecommons.org/l/by-sa/4.0/88x31.png
-[cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY%20SA%204.0-lightgrey.svg
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
