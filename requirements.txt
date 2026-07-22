@@ -1,7 +1,8 @@
-# spaudiopy 0.2.0 calls scipy.special.sph_harm, which SciPy 1.15+ removed, so pin below it.
-# SciPy < 1.15 has wheels through Python 3.13; use Python <= 3.13 (system python3 may be 3.14).
+# spaudiopy 0.2.0 calls scipy.special.sph_harm, which SciPy 1.15+ removed.
+# AmbisonicEnergyRenderer.py installs a small compatibility shim (mapping it onto
+# the new sph_harm_y), so any modern SciPy - and Python 3.14 - works unpinned.
 numpy
-scipy<1.15
+scipy
 matplotlib
 spaudiopy
 wavio

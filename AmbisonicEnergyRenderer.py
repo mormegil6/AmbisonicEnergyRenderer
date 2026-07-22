@@ -18,6 +18,19 @@ import sys
 
 import numpy as np
 import wavio
+
+# scipy >= 1.15 removed scipy.special.sph_harm (renamed to sph_harm_y, with a
+# swapped argument order and theta/phi convention). spaudiopy 0.2.0 still calls
+# the old sph_harm, so provide it when absent - this lets the renderer run on
+# current scipy and Python 3.14 as well as the older pinned stack. Set before
+# spaudiopy is imported so its scipy.special reference picks up the shim.
+import scipy.special as _scysp
+if not hasattr(_scysp, "sph_harm") and hasattr(_scysp, "sph_harm_y"):
+    def _sph_harm_compat(m, n, theta, phi):
+        # old sph_harm(m, n, azimuth, polar) == new sph_harm_y(n, m, polar, azimuth)
+        return _scysp.sph_harm_y(n, m, phi, theta)
+    _scysp.sph_harm = _sph_harm_compat
+
 import spaudiopy as spa
 from scipy.spatial import cKDTree
 import matplotlib 

@@ -1,4 +1,4 @@
-[![PyPI](https://img.shields.io/badge/python-3.9--3.13-blue.svg)]() [![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white&style=flat)]() [![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white&style=flat)]() [![Matplotlib](https://img.shields.io/badge/Matplotlib-%23ffffff.svg?style=for-the-badge&logo=Matplotlib&logoColor=black&style=flat)]() [![FFmpeg](https://shields.io/badge/FFmpeg-%23171717.svg?logo=ffmpeg&style=for-the-badge&labelColor=171717&logoColor=5cb85c&style=flat)]() [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PyPI](https://img.shields.io/badge/python-3.9--3.14-blue.svg)]() [![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white&style=flat)]() [![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white&style=flat)]() [![Matplotlib](https://img.shields.io/badge/Matplotlib-%23ffffff.svg?style=for-the-badge&logo=Matplotlib&logoColor=black&style=flat)]() [![FFmpeg](https://shields.io/badge/FFmpeg-%23171717.svg?logo=ffmpeg&style=for-the-badge&labelColor=171717&logoColor=5cb85c&style=flat)]() [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # AmbisonicEnergyRenderer.py
 Generates an energy visualization video from an Ambisonic (ACN/SN3D) WAV file using precomputed k-NN inverse-distance weighting (IDW) onto a regular 2D grid, multiprocessing for per-frame computation, and direct ffmpeg streaming for efficient encoding.
@@ -17,14 +17,14 @@ Example resulting animation (converted to .gif, hence the grainy image):
 - Optional hardware-accelerated video encoding on macOS (VideoToolbox) and Windows/NVIDIA (NVENC), with libx264 as the portable default fallback when hardware codecs are not available.
 
 ## Requirements
-- Python 3.9-3.13 with NumPy, SciPy (< 1.15), Matplotlib, spaudiopy, and wavio installed, as the script relies on array math, spherical-harmonic utilities, and WAV I/O. SciPy is pinned below 1.15 because spaudiopy 0.2.0 still calls `scipy.special.sph_harm`, which SciPy 1.15+ removed. Python 3.14 ships only SciPy 1.15+, so use Python 3.13 or older (a venv is simplest).
+- Python 3.9-3.14 with NumPy, SciPy, Matplotlib, spaudiopy, and wavio installed, as the script relies on array math, spherical-harmonic utilities, and WAV I/O. No SciPy pin is required: spaudiopy 0.2.0 still calls `scipy.special.sph_harm`, which SciPy 1.15+ removed, but the script installs a small compatibility shim that maps it onto the new `sph_harm_y` (verified to produce identical spherical harmonics), so current SciPy on Python 3.14 works as well as older stacks.
 - FFmpeg available on the system PATH (or specify via `--ffmpeg`), since frames are streamed as raw RGB for encoding to MP4, and encoders must exist in the local ffmpeg build for the selected `--encoder`.
 - T-design file `Design_5200_100_random.dat` placed next to the script by default (or a custom path via `--tdesign`), providing the sampling directions for directional energy computation on the sphere.
 
 ## Install dependencies with pip (in a venv):
 ```
-python3.12 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt        # or: pip install numpy "scipy<1.15" matplotlib spaudiopy wavio
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt        # or: pip install numpy scipy matplotlib spaudiopy wavio
 ```
 FFmpeg should be a recent build with encoders for the chosen backend (libx264, h264_videotoolbox on macOS, h264_nvenc on NVIDIA, etc.), which can be verified via `ffmpeg -encoders` on each platform.
 
