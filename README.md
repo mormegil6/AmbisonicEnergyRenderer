@@ -1,4 +1,4 @@
-[![PyPI](https://img.shields.io/badge/python-3.9-blue.svg)]() [![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white&style=flat)]() [![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white&style=flat)]() [![Matplotlib](https://img.shields.io/badge/Matplotlib-%23ffffff.svg?style=for-the-badge&logo=Matplotlib&logoColor=black&style=flat)]() [![FFmpeg](https://shields.io/badge/FFmpeg-%23171717.svg?logo=ffmpeg&style=for-the-badge&labelColor=171717&logoColor=5cb85c&style=flat)]() [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PyPI](https://img.shields.io/badge/python-3.9--3.13-blue.svg)]() [![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white&style=flat)]() [![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white&style=flat)]() [![Matplotlib](https://img.shields.io/badge/Matplotlib-%23ffffff.svg?style=for-the-badge&logo=Matplotlib&logoColor=black&style=flat)]() [![FFmpeg](https://shields.io/badge/FFmpeg-%23171717.svg?logo=ffmpeg&style=for-the-badge&labelColor=171717&logoColor=5cb85c&style=flat)]() [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # AmbisonicEnergyRenderer.py
 Generates an energy visualization video from an Ambisonic (ACN/SN3D) WAV file using precomputed k-NN inverse-distance weighting (IDW) onto a regular 2D grid, multiprocessing for per-frame computation, and direct ffmpeg streaming for efficient encoding.
@@ -17,27 +17,28 @@ Example resulting animation (converted to .gif, hence the grainy image):
 - Optional hardware-accelerated video encoding on macOS (VideoToolbox) and Windows/NVIDIA (NVENC), with libx264 as the portable default fallback when hardware codecs are not available.
 
 ## Requirements
-- Python 3.9+ with NumPy, SciPy, Matplotlib, spaudiopy, and wavio installed, as the script relies on array math, spherical-harmonic utilities, and WAV I/O.
-- FFmpeg available on the system PATH (or specify via `–-ffmpeg`), since frames are streamed as raw RGB for encoding to MP4, and encoders must exist in the local ffmpeg build for the selected `–-encoder`.
-- T-design file `Design_5200_100_random.dat` placed next to the script by default (or a custom path via `–-tdesign`), providing the sampling directions for directional energy computation on the sphere.
+- Python 3.9-3.13 with NumPy, SciPy (< 1.15), Matplotlib, spaudiopy, and wavio installed, as the script relies on array math, spherical-harmonic utilities, and WAV I/O. SciPy is pinned below 1.15 because spaudiopy 0.2.0 still calls `scipy.special.sph_harm`, which SciPy 1.15+ removed. Python 3.14 ships only SciPy 1.15+, so use Python 3.13 or older (a venv is simplest).
+- FFmpeg available on the system PATH (or specify via `--ffmpeg`), since frames are streamed as raw RGB for encoding to MP4, and encoders must exist in the local ffmpeg build for the selected `--encoder`.
+- T-design file `Design_5200_100_random.dat` placed next to the script by default (or a custom path via `--tdesign`), providing the sampling directions for directional energy computation on the sphere.
 
-## Install dependencies with pip:
+## Install dependencies with pip (in a venv):
 ```
-python -m pip install numpy scipy matplotlib spaudiopy wavio
+python3.12 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt        # or: pip install numpy "scipy<1.15" matplotlib spaudiopy wavio
 ```
 FFmpeg should be a recent build with encoders for the chosen backend (libx264, h264_videotoolbox on macOS, h264_nvenc on NVIDIA, etc.), which can be verified via `ffmpeg -encoders` on each platform.
 
 ## Hardware acceleration notes
-- macOS: use `–-encoder h264_videotoolbox` or `–-encoder hevc_videotoolbox`, providing a target bitrate via `–-bitrate` to leverage Apple VideoToolbox hardware encoding on supported Macs.
-- Windows/NVIDIA (and Linux with NVIDIA): use `–-encoder h264_nvenc` or `–-encoder hevc_nvenc` with `–-bitrate` to use NVENC on RTX GPUs, provided the FFmpeg build includes NVENC support and drivers are installed.
-- Generic fallback: use `–-encoder libx264` with `–-crf` and `–-preset` controls for a portable software path that works without hardware encoders on all platforms.
+- macOS: use `--encoder h264_videotoolbox` or `--encoder hevc_videotoolbox`, providing a target bitrate via `--bitrate` to leverage Apple VideoToolbox hardware encoding on supported Macs.
+- Windows/NVIDIA (and Linux with NVIDIA): use `--encoder h264_nvenc` or `--encoder hevc_nvenc` with `--bitrate` to use NVENC on RTX GPUs, provided the FFmpeg build includes NVENC support and drivers are installed.
+- Generic fallback: use `--encoder libx264` with `--crf` and `--preset` controls for a portable software path that works without hardware encoders on all platforms.
 
 ## Usage
 Basic invocation:
 ```
 python AmbisonicEnergyRenderer.py -i path/to/input.wav
 ```
-This creates an MP4 next to the input with the same basename, using libx264, CRF=20, “ultrafast” preset, 25 fps, and a ~2160×1080 grid by default via `–-grid-res 1/6`.
+This creates an MP4 next to the input with the same basename, using libx264, CRF=20, “ultrafast” preset, 25 fps, and a ~2160×1080 grid by default via `--grid-res 1/6`.
 
 Full CLI:
 ```
@@ -50,7 +51,7 @@ Full CLI:
 --grid-res FLOAT              Grid step in degrees (default: 1/6 → ~2160×1080)
 --knn INT                     k-NN for IDW (default: 3)
 --idw-pow FLOAT               IDW power parameter p (default: 2.0)
--–cmap STR                    Matplotlib colormap name (e.g., inferno, magma, coolwarm, twilight_r; default: viridis)
+--cmap STR                    Matplotlib colormap name (e.g., inferno, magma, coolwarm, twilight_r; default: viridis)
 --encoder STR                 One of: libx264 (default), h264_videotoolbox, hevc_videotoolbox,
                               h264_nvenc, hevc_nvenc, h264_qsv, hevc_qsv, h264_amf, hevc_amf
 --crf STR                     CRF for libx264 (default: 20); ignored by hardware encoders
@@ -93,10 +94,10 @@ python AmbisonicEnergyRenderer.py -i input.wav -o out.mp4 --ffmpeg "C:\ffmpeg\bi
 ```
 
 ## Performance tuning
-- Resolution: `-–grid-res` controls spatial resolution; the default 1/6° produces ~2160×1080, and larger values (e.g., 0.5°) reduce pixels and speed up computation and encoding.
-- Interpolation smoothness/detail: `–-knn` and `–-idw-pow` adjust IDW interpolation; increasing k smooths the map while increasing idw-pow sharpens local detail, with runtime and memory roughly scaling linearly with k due to the gather-and-weight step.
-- Encoder: hardware encoders (`-–encoder h264_videotoolbox` on macOS or `–-encoder h264_nvenc` on NVIDIA) can substantially reduce total time-to-video compared to libx264, especially at larger resolutions, assuming the local ffmpeg build supports them.
-- Frames per second and window length: `–-fps` controls frame count per second, while the script uses a 200 ms energy window; fewer frames or a smaller grid reduce total compute and bitrate while maintaining intelligible motion for many use cases.
+- Resolution: `--grid-res` controls spatial resolution; the default 1/6° produces ~2160×1080, and larger values (e.g., 0.5°) reduce pixels and speed up computation and encoding.
+- Interpolation smoothness/detail: `--knn` and `--idw-pow` adjust IDW interpolation; increasing k smooths the map while increasing idw-pow sharpens local detail, with runtime and memory roughly scaling linearly with k due to the gather-and-weight step.
+- Encoder: hardware encoders (`--encoder h264_videotoolbox` on macOS or `--encoder h264_nvenc` on NVIDIA) can substantially reduce total time-to-video compared to libx264, especially at larger resolutions, assuming the local ffmpeg build supports them.
+- Frames per second and window length: `--fps` controls frame count per second, while the script uses a 200 ms energy window; fewer frames or a smaller grid reduce total compute and bitrate while maintaining intelligible motion for many use cases.
 
 ## How it works
 - The script reads the WAV, infers the Ambisonic order from the channel count, computes max-rE weights, and applies spherical harmonics at t-design directions to obtain directional energy over a sliding window per frame, normalized to a chosen dynamic range.
