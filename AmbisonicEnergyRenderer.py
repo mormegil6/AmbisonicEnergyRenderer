@@ -205,7 +205,13 @@ def main():
 
     # Grid (~2160x1080 default)
     grid_res = float(args.grid_res)
-    xgv = np.linspace(-180.0, 180.0, int(round(360.0 / grid_res)), dtype=np.float32)
+    # Azimuth axis runs +180 -> -180 left-to-right so the equirect matches the
+    # standard 360-video convention (image x proportional to -azimuth): an
+    # ACN/SN3D LEFT source (+azimuth, CCW from front) then lands on the LEFT half
+    # of the frame. A plain -180 -> +180 axis is the mirror image and reads as a
+    # left<->right swap once the flat frame is wrapped onto the inside of the
+    # sphere in a 360 player (or against any standard equirect tooling).
+    xgv = np.linspace(180.0, -180.0, int(round(360.0 / grid_res)), dtype=np.float32)
     ygv = np.linspace(0.0, 180.0, int(round(180.0 / grid_res)), dtype=np.float32)
 
     # Precompute k-NN IDW mapping (periodic in azimuth)
