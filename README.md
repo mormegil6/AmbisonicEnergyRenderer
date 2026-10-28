@@ -7,7 +7,7 @@ The script supports high resolutions (e.g., 2160×1080), optional hardware encod
 
 Example resulting animation (converted to .gif, hence the grainy image):
 
-![example resulting animation](https://i.ibb.co/j90vq6qp/animation.gif)
+![example resulting animation](docs/images/ambisonic_energy_renderer.gif)
 
 ## Features
 - Ambisonic order is detected from the input channel count and used to build spherical-harmonic matrices and *max*-rE weights automatically, so higher orders are supported when more channels are present.
